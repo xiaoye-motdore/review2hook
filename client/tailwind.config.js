@@ -18,6 +18,10 @@ export default {
           DEFAULT: "#9B3B2E",
           soft: "#F3E3DE",
         },
+        success: {
+          DEFAULT: "#2F7A4F",
+          soft: "#E7F3EB",
+        },
       },
       fontFamily: {
         serif: ["Georgia", "Cambria", '"Times New Roman"', "Times", "serif"],

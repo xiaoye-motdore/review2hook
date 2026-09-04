@@ -1,4 +1,5 @@
 import { useLocale } from "../i18n/LocaleContext";
+import AnalysisProgress from "./AnalysisProgress";
 
 export type AnalysisStatus = "idle" | "uploaded" | "analyzing" | "complete" | "error";
 
@@ -20,20 +21,6 @@ function CheckIcon() {
   );
 }
 
-function Spinner() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-5 w-5 shrink-0 animate-spin"
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-    </svg>
-  );
-}
-
 export default function StatusBanner({ status, reviewCount, errorMessage }: StatusBannerProps) {
   const { t } = useLocale();
 
@@ -49,14 +36,7 @@ export default function StatusBanner({ status, reviewCount, errorMessage }: Stat
   }
 
   if (status === "analyzing") {
-    return (
-      <div className="mb-8 flex items-center gap-3 rounded-lg bg-ink/5 px-5 py-4 text-ink print:hidden">
-        <Spinner />
-        <span>
-          {reviewCount != null ? t("status.analyzing", { count: reviewCount }) : t("status.analyzingNoCount")}
-        </span>
-      </div>
-    );
+    return <AnalysisProgress />;
   }
 
   return (

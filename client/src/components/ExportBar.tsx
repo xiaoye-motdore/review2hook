@@ -16,18 +16,18 @@ export default function ExportBar({ reportText }: { reportText: string }) {
   }
 
   return (
-    <div className="flex shrink-0 gap-3 print:hidden">
+    <div className="flex shrink-0 gap-3 rounded-lg border border-line bg-card p-2 shadow-soft print:hidden">
       <button
         type="button"
         onClick={handleCopy}
-        className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
+        className="rounded-md px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-accent-soft"
       >
         {copied ? t("export.copied") : t("export.copyReport")}
       </button>
       <button
         type="button"
         onClick={() => window.print()}
-        className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
+        className="rounded-md px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-accent-soft"
       >
         {t("export.downloadPdf")}
       </button>

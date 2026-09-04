@@ -2,6 +2,7 @@ import type { AnalysisResult } from "../types";
 import { deriveTopFinding, buildRecommendations, formatReportText } from "../lib/deriveInsights";
 import { useLocale } from "../i18n/LocaleContext";
 import Accordion from "./Accordion";
+import CompleteBanner from "./CompleteBanner";
 import TopFinding from "./TopFinding";
 import Recommendations from "./Recommendations";
 import ExportBar from "./ExportBar";
@@ -18,13 +19,19 @@ export default function ResultsDisplay({ result }: { result: AnalysisResult }) {
 
   return (
     <div className="space-y-12">
-      <div className="flex flex-wrap items-start justify-between gap-5">
-        <div>
-          <h2 className="text-2xl text-ink">{result.product.title}</h2>
-          <p className="mt-1 text-sm text-muted">
-            {t("results.meta", { asin: result.product.asin, count: result.reviewCount })}
-          </p>
-        </div>
+      <CompleteBanner result={result} />
+
+      <div>
+        <h2 className="text-2xl text-ink">{result.product.title}</h2>
+        <p className="mt-1 text-sm text-muted">
+          {t("results.meta", { asin: result.product.asin, count: result.reviewCount })}
+        </p>
+      </div>
+
+      {/* Sticky within this (tall) results container so it stays reachable
+          while scrolling through the accordions below, instead of scrolling
+          away with the short title block above it. */}
+      <div className="sticky top-16 z-10 flex justify-end print:hidden">
         <ExportBar reportText={reportText} />
       </div>
 

@@ -7,6 +7,7 @@ export type Locale = "en" | "zh";
 export const translations = {
   en: {
     "app.subtitle": "Upload a reviews CSV or XLSX export to mine pain points, consumer language, and ad angles.",
+    "app.trustLine": "AI-powered analysis · Trusted by cross-border sellers",
     "app.orTryDemo": "or try the demo",
 
     "asinForm.placeholder": "Enter an Amazon ASIN (e.g. B08XYZ1234)",
@@ -21,8 +22,16 @@ export const translations = {
 
     "status.uploaded": "File uploaded ✓ — {{count}} reviews found",
     "status.uploadedNoCount": "File uploaded ✓",
-    "status.analyzing": "Analyzing {{count}} reviews…",
-    "status.analyzingNoCount": "Analyzing reviews…",
+    "progress.reading": "Reading reviews…",
+    "progress.clustering": "Clustering pain points…",
+    "progress.extracting": "Extracting consumer language…",
+    "progress.generating": "Generating ad angles…",
+    "progress.writing": "Writing strategy notes…",
+
+    "results.completeBanner":
+      "✓ Analysis complete — {{reviewCount}} reviews analyzed, {{painPointCount}} pain points found, {{adAngleCount}} ad angles generated.",
+
+    "emptyState.overlay": "Upload reviews to see your analysis",
 
     "results.showingUploadWithColumn":
       'Showing analysis of your uploaded file (review text read from column "{{column}}").',
@@ -65,6 +74,7 @@ export const translations = {
   },
   zh: {
     "app.subtitle": "上传评论 CSV 或 XLSX 文件，挖掘用户痛点、消费者语言和广告角度。",
+    "app.trustLine": "AI 驱动分析 · 深受跨境卖家信赖",
     "app.orTryDemo": "或试用演示数据",
 
     "asinForm.placeholder": "输入亚马逊 ASIN（例如 B08XYZ1234）",
@@ -79,8 +89,15 @@ export const translations = {
 
     "status.uploaded": "文件已上传 ✓ — 找到 {{count}} 条评论",
     "status.uploadedNoCount": "文件已上传 ✓",
-    "status.analyzing": "正在分析 {{count}} 条评论…",
-    "status.analyzingNoCount": "正在分析评论…",
+    "progress.reading": "正在读取评论…",
+    "progress.clustering": "正在聚类痛点…",
+    "progress.extracting": "正在提取消费者语言…",
+    "progress.generating": "正在生成广告角度…",
+    "progress.writing": "正在撰写策略笔记…",
+
+    "results.completeBanner": "✓ 分析完成 — 已分析 {{reviewCount}} 条评论，发现 {{painPointCount}} 个痛点，生成 {{adAngleCount}} 个广告角度。",
+
+    "emptyState.overlay": "上传评论即可查看您的分析结果",
 
     "results.showingUploadWithColumn": "正在显示您上传文件的分析结果（评论文本读取自列 “{{column}}”）。",
     "results.showingUploadNoColumn": "正在显示您上传文件的分析结果。",
