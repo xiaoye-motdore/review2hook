@@ -50,8 +50,8 @@ export default function FileUploadZone({ onFileSelected, isLoading, fileName }: 
         console.log("[FileUploadZone] onDrop fired, files:", e.dataTransfer.files.length);
         if (!isLoading) handleFile(e.dataTransfer.files[0]);
       }}
-      className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-8 text-center transition ${
-        isDragOver ? "border-emerald-500 bg-emerald-50" : "border-slate-300 hover:border-emerald-400"
+      className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-12 text-center transition ${
+        isDragOver ? "border-accent bg-accent-soft" : "border-line hover:border-accent/50"
       } ${isLoading ? "cursor-not-allowed opacity-60" : ""}`}
     >
       <input
@@ -67,15 +67,15 @@ export default function FileUploadZone({ onFileSelected, isLoading, fileName }: 
           e.target.value = "";
         }}
       />
-      <p className="font-medium text-slate-700">
+      <p className="text-ink">
         {isLoading
           ? "Analyzing…"
           : fileName
           ? `Uploaded: ${fileName}`
           : "Drag & drop a reviews CSV or XLSX file, or click to browse"}
       </p>
-      <p className="mt-1 text-sm text-slate-400">Accepts .csv, .xlsx, .xls</p>
-      {rejectionMessage && <p className="mt-2 text-sm text-red-600">{rejectionMessage}</p>}
+      <p className="mt-2 text-sm text-muted">Accepts .csv, .xlsx, .xls</p>
+      {rejectionMessage && <p className="mt-3 text-sm text-danger">{rejectionMessage}</p>}
     </div>
   );
 }

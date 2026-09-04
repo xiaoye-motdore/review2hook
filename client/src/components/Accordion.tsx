@@ -10,19 +10,19 @@ export default function Accordion({ title, defaultOpen = false, children }: Acco
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white">
+    <div className="rounded-lg bg-card shadow-soft">
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
-        className="flex w-full items-center justify-between px-5 py-4 text-left"
+        className="flex w-full items-center justify-between px-8 py-6 text-left transition-colors hover:bg-accent-soft/40"
       >
-        <span className="font-semibold text-slate-900">{title}</span>
+        <span className="font-serif text-lg text-ink">{title}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`h-5 w-5 shrink-0 text-muted transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         >
           <path
             fillRule="evenodd"
@@ -33,9 +33,7 @@ export default function Accordion({ title, defaultOpen = false, children }: Acco
       </button>
       {/* Kept mounted (not conditionally rendered) so print:block can force it
           visible in the printed report regardless of the on-screen collapsed state. */}
-      <div className={`${isOpen ? "block" : "hidden"} print:block border-t border-slate-100 px-5 py-4`}>
-        {children}
-      </div>
+      <div className={`${isOpen ? "block" : "hidden"} print:block px-8 pb-8`}>{children}</div>
     </div>
   );
 }

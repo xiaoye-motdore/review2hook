@@ -1,11 +1,11 @@
 export default function Recommendations({ recommendations }: { recommendations: string[] }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6">
-      <h2 className="text-lg font-semibold text-slate-900">What to do next（下一步建议）</h2>
-      <ul className="mt-3 space-y-2.5">
+    <section className="rounded-lg bg-card p-10 shadow-soft">
+      <h2 className="text-xl text-ink">What to do next（下一步建议）</h2>
+      <ul className="mt-5 space-y-4">
         {recommendations.map((line, index) => (
-          <li key={index} className="flex gap-3 text-slate-700">
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+          <li key={index} className="flex gap-3.5 leading-relaxed text-ink/90">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-dark">
               {index + 1}
             </span>
             <span>{line}</span>

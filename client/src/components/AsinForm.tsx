@@ -16,18 +16,18 @@ export default function AsinForm({ onSubmit, isLoading }: AsinFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
       <input
         type="text"
         value={asin}
         onChange={(e) => setAsin(e.target.value)}
         placeholder="Enter an Amazon ASIN (e.g. B08XYZ1234)"
-        className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="flex-1 rounded-lg border border-line bg-paper px-4 py-3 text-ink placeholder:text-muted/70 transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
       />
       <button
         type="submit"
         disabled={isLoading || !asin.trim()}
-        className="rounded-lg bg-emerald-600 px-6 py-2.5 font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className="rounded-lg bg-accent px-6 py-3 font-medium text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-muted/40"
       >
         {isLoading ? "Analyzing…" : "Analyze"}
       </button>

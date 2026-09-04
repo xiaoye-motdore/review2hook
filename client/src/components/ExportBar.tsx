@@ -14,18 +14,18 @@ export default function ExportBar({ reportText }: { reportText: string }) {
   }
 
   return (
-    <div className="flex shrink-0 gap-2 print:hidden">
+    <div className="flex shrink-0 gap-3 print:hidden">
       <button
         type="button"
         onClick={handleCopy}
-        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+        className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
       >
         {copied ? "Copied ✓" : "Copy Report"}
       </button>
       <button
         type="button"
         onClick={() => window.print()}
-        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+        className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
       >
         Download PDF
       </button>

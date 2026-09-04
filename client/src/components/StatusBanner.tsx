@@ -37,29 +37,23 @@ export default function StatusBanner({ status, reviewCount, errorMessage }: Stat
 
   if (status === "uploaded") {
     return (
-      <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800 print:hidden">
+      <div className="mb-8 flex items-center gap-3 rounded-lg bg-accent-soft px-5 py-4 text-accent-dark print:hidden">
         <CheckIcon />
-        <span className="font-medium">
-          File uploaded ✓{reviewCount != null ? ` — ${reviewCount} reviews found` : ""}
-        </span>
+        <span>File uploaded ✓{reviewCount != null ? ` — ${reviewCount} reviews found` : ""}</span>
       </div>
     );
   }
 
   if (status === "analyzing") {
     return (
-      <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 print:hidden">
+      <div className="mb-8 flex items-center gap-3 rounded-lg bg-ink/5 px-5 py-4 text-ink print:hidden">
         <Spinner />
-        <span className="font-medium">
-          {reviewCount != null ? `Analyzing ${reviewCount} reviews…` : "Analyzing reviews…"}
-        </span>
+        <span>{reviewCount != null ? `Analyzing ${reviewCount} reviews…` : "Analyzing reviews…"}</span>
       </div>
     );
   }
 
   return (
-    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 print:hidden">
-      {errorMessage}
-    </div>
+    <div className="mb-8 rounded-lg bg-danger-soft px-5 py-4 text-sm text-danger print:hidden">{errorMessage}</div>
   );
 }

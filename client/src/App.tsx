@@ -69,22 +69,22 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <header className="mb-8 print:hidden">
-          <h1 className="text-2xl font-bold text-slate-900">Hookminer</h1>
-          <p className="mt-1 text-slate-600">
+    <div className="min-h-screen bg-paper">
+      <div className="mx-auto max-w-content px-6 py-16 sm:px-8">
+        <header className="mb-14 print:hidden">
+          <h1 className="text-4xl text-ink">Hookminer</h1>
+          <p className="mt-3 text-lg leading-relaxed text-muted">
             Upload a reviews CSV or XLSX export to mine pain points, consumer language, and ad angles.
           </p>
         </header>
 
-        <div className="mb-6 space-y-4 rounded-xl border border-slate-200 p-5 print:hidden">
+        <div className="mb-10 space-y-6 rounded-lg bg-card p-10 shadow-soft print:hidden">
           <FileUploadZone onFileSelected={handleFileSelected} isLoading={isBusy} fileName={fileName} />
 
-          <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-slate-400">
-            <div className="h-px flex-1 bg-slate-200" />
+          <div className="flex items-center gap-4 text-xs uppercase tracking-widest text-muted">
+            <div className="h-px flex-1 bg-line" />
             or try the demo
-            <div className="h-px flex-1 bg-slate-200" />
+            <div className="h-px flex-1 bg-line" />
           </div>
 
           <AsinForm onSubmit={handleAsinSubmit} isLoading={isBusy} />
@@ -94,7 +94,7 @@ export default function App() {
 
         {result && (
           <>
-            <p className="mb-3 text-sm text-slate-500 print:hidden">
+            <p className="mb-6 text-sm text-muted print:hidden">
               {source === "upload"
                 ? `Showing analysis of your uploaded file${
                     result.detectedTextColumn ? ` (review text read from column "${result.detectedTextColumn}")` : ""

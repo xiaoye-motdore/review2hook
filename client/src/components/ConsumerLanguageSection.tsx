@@ -6,16 +6,13 @@ export default function ConsumerLanguageSection({
   consumerLanguage: ConsumerLanguageGroup[];
 }) {
   return (
-    <ul className="space-y-3">
+    <ul className="space-y-5">
       {consumerLanguage.map((group) => (
         <li key={group.theme}>
-          <p className="text-sm font-medium text-slate-700">{group.theme}</p>
-          <div className="mt-1.5 flex flex-wrap gap-2">
+          <p className="text-sm text-ink">{group.theme}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
             {group.phrases.map((phrase) => (
-              <span
-                key={phrase}
-                className="rounded-md bg-amber-50 px-2.5 py-1 text-sm text-amber-800 ring-1 ring-inset ring-amber-200"
-              >
+              <span key={phrase} className="rounded-md bg-accent-soft px-2.5 py-1 text-sm text-accent-dark">
                 &ldquo;{phrase}&rdquo;
               </span>
             ))}
