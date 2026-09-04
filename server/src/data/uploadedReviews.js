@@ -124,11 +124,21 @@ async function parseXlsxRows(buffer) {
 
 export async function parseReviewsFromBuffer(buffer, filename = "") {
   const isCsv = filename.toLowerCase().endsWith(".csv");
-  const rows = isCsv ? parseCsvRows(buffer) : await parseXlsxRows(buffer);
+  console.log(`[uploadedReviews] parsing "${filename}" as`, isCsv ? "CSV" : "XLSX/XLS");
+
+  let rows;
+  try {
+    rows = isCsv ? parseCsvRows(buffer) : await parseXlsxRows(buffer);
+  } catch (err) {
+    console.error("[uploadedReviews] failed to parse spreadsheet buffer:", err);
+    throw err;
+  }
+  console.log("[uploadedReviews] rows parsed:", rows.length);
 
   const baseFilename = filename.replace(/\.[^./\\]+$/, "") || "Uploaded Reviews";
 
   if (rows.length === 0) {
+    console.warn("[uploadedReviews] 0 rows found, nothing to analyze");
     return {
       product: { asin: "UPLOADED", title: baseFilename },
       reviews: [],
@@ -138,10 +148,13 @@ export async function parseReviewsFromBuffer(buffer, filename = "") {
   }
 
   const headers = Object.keys(rows[0]);
+  console.log("[uploadedReviews] headers:", headers);
+
   const textHeader = detectTextColumn(headers, rows);
   const ratingHeader = findExactHeader(headers, RATING_HEADER_CANDIDATES);
   const titleHeader = findExactHeader(headers, TITLE_HEADER_CANDIDATES);
   const asinHeader = findExactHeader(headers, ASIN_HEADER_CANDIDATES);
+  console.log("[uploadedReviews] detected columns:", { textHeader, ratingHeader, titleHeader, asinHeader });
 
   const reviews = [];
   if (textHeader) {
@@ -156,7 +169,10 @@ export async function parseReviewsFromBuffer(buffer, filename = "") {
         rating: Number.isFinite(ratingRaw) ? ratingRaw : null,
       });
     });
+  } else {
+    console.warn("[uploadedReviews] no text column detected — every candidate header and length heuristic missed");
   }
+  console.log("[uploadedReviews] reviews extracted:", reviews.length);
 
   const asin = asinHeader ? mostCommonValue(rows, asinHeader) : "";
   const title = titleHeader ? mostCommonValue(rows, titleHeader) : "";

@@ -16,18 +16,24 @@ export async function analyzeAsin(asin: string): Promise<AnalysisResult> {
 }
 
 export async function analyzeUploadedFile(file: File): Promise<AnalysisResult> {
+  console.log("[api/analyze] building FormData for:", file.name, file.size, "bytes, type:", file.type);
   const formData = new FormData();
   formData.append("file", file);
 
+  console.log("[api/analyze] POSTing to /api/analyze/upload...");
   const response = await fetch("/api/analyze/upload", {
     method: "POST",
     body: formData,
   });
+  console.log("[api/analyze] response status:", response.status, response.ok);
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
+    console.error("[api/analyze] server returned error:", body);
     throw new Error(body.error ?? "Failed to analyze uploaded file.");
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log("[api/analyze] parsed response body:", data);
+  return data;
 }

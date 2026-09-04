@@ -29,14 +29,18 @@ export default function App() {
   }
 
   async function handleFileSelected(file: File) {
+    console.log("[App] handleFileSelected called with:", file.name, file.size, "bytes");
     setIsLoading(true);
     setError(null);
     setFileName(file.name);
     try {
+      console.log("[App] calling analyzeUploadedFile...");
       const data = await analyzeUploadedFile(file);
+      console.log("[App] analyzeUploadedFile resolved:", data);
       setResult(data);
       setSource("upload");
     } catch (err) {
+      console.error("[App] analyzeUploadedFile failed:", err);
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setResult(null);
     } finally {

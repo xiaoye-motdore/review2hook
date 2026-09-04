@@ -2,6 +2,7 @@ node_modules/
 dist/
 .env
 .DS_Store
+*.tsbuildinfo
 
 # Sample/uploaded review exports (contain real reviewer PII) — not project assets
 *.xlsx

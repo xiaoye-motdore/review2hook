@@ -46,18 +46,29 @@ export async function analyzeAsin(asin) {
 }
 
 export async function analyzeUploadedFile(buffer, filename) {
+  console.log("[analysisService] analyzeUploadedFile called for:", filename, buffer.length, "bytes");
+
   const { product, reviews, headers, detectedTextColumn } = await parseReviewsFromBuffer(buffer, filename);
+  console.log("[analysisService] parseReviewsFromBuffer returned:", {
+    product,
+    headers,
+    detectedTextColumn,
+    reviewCount: reviews.length,
+  });
 
   if (reviews.length === 0) {
     const message =
       headers.length > 0
         ? `Couldn't find a review text column in this file. Columns found: ${headers.join(", ")}`
         : "This file appears to be empty.";
+    console.warn("[analysisService] no reviews extracted:", message);
     const error = new Error(message);
     error.status = 400;
     throw error;
   }
 
+  console.log("[analysisService] running AI analysis on", reviews.length, "reviews...");
   const result = await runAnalysis(product, reviews);
+  console.log("[analysisService] analysis pipeline complete");
   return { ...result, detectedTextColumn };
 }

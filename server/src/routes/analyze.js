@@ -25,14 +25,24 @@ router.post("/analyze", async (req, res) => {
 });
 
 router.post("/analyze/upload", upload.single("file"), async (req, res) => {
+  console.log("[route:/analyze/upload] request received, req.file:", req.file ? {
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+  } : null);
+
   if (!req.file) {
+    console.warn("[route:/analyze/upload] no file on request, rejecting");
     return res.status(400).json({ error: "Please choose a CSV or XLSX file to upload." });
   }
 
   try {
+    console.log("[route:/analyze/upload] calling analyzeUploadedFile...");
     const result = await analyzeUploadedFile(req.file.buffer, req.file.originalname);
+    console.log("[route:/analyze/upload] analysis complete, reviewCount:", result.reviewCount);
     res.json(result);
   } catch (err) {
+    console.error("[route:/analyze/upload] analyzeUploadedFile threw:", err);
     res.status(err.status ?? 400).json({ error: err.message });
   }
 });
