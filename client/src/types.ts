@@ -19,6 +19,12 @@ export interface AdAngle {
   targetsTheme: string;
 }
 
+export interface UploadPreview {
+  product: Product;
+  reviewCount: number;
+  detectedTextColumn?: string | null;
+}
+
 export interface AnalysisResult {
   product: Product;
   reviewCount: number;

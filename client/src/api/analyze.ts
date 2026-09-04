@@ -1,4 +1,4 @@
-import type { AnalysisResult } from "../types";
+import type { AnalysisResult, UploadPreview } from "../types";
 
 export async function analyzeAsin(asin: string): Promise<AnalysisResult> {
   const response = await fetch("/api/analyze", {
@@ -10,6 +10,23 @@ export async function analyzeAsin(asin: string): Promise<AnalysisResult> {
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     throw new Error(body.error ?? "Failed to analyze ASIN.");
+  }
+
+  return response.json();
+}
+
+export async function previewUploadedFile(file: File): Promise<UploadPreview> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/analyze/preview", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error ?? "Failed to read uploaded file.");
   }
 
   return response.json();

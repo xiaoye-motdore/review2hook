@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { analyzeAsin, analyzeUploadedFile } from "../services/analysisService.js";
+import { analyzeAsin, analyzeUploadedFile, previewUpload } from "../services/analysisService.js";
 
 const router = Router();
 
@@ -25,6 +25,22 @@ router.post("/analyze", async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error("[route:/analyze] analyzeAsin threw:", err);
+    res.status(err.status ?? 502).json({ error: err.message });
+  }
+});
+
+// Parses/validates an upload without running AI calls, so the client can
+// show an accurate "N reviews found" status before analysis starts.
+router.post("/analyze/preview", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Please choose a CSV or XLSX file to upload." });
+  }
+
+  try {
+    const result = await previewUpload(req.file.buffer, req.file.originalname);
+    res.json(result);
+  } catch (err) {
+    console.error("[route:/analyze/preview] previewUpload threw:", err);
     res.status(err.status ?? 502).json({ error: err.message });
   }
 });

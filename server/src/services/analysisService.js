@@ -46,27 +46,41 @@ export async function analyzeAsin(asin) {
   return runAnalysis(product, reviews);
 }
 
-export async function analyzeUploadedFile(buffer, filename) {
-  console.log("[analysisService] analyzeUploadedFile called for:", filename, buffer.length, "bytes");
-
-  const { product, reviews, headers, detectedTextColumn } = await parseReviewsFromBuffer(buffer, filename);
+async function parseAndValidateUpload(buffer, filename) {
+  const parsed = await parseReviewsFromBuffer(buffer, filename);
   console.log("[analysisService] parseReviewsFromBuffer returned:", {
-    product,
-    headers,
-    detectedTextColumn,
-    reviewCount: reviews.length,
+    product: parsed.product,
+    headers: parsed.headers,
+    detectedTextColumn: parsed.detectedTextColumn,
+    reviewCount: parsed.reviews.length,
   });
 
-  if (reviews.length === 0) {
+  if (parsed.reviews.length === 0) {
     const message =
-      headers.length > 0
-        ? `Couldn't find a review text column in this file. Columns found: ${headers.join(", ")}`
+      parsed.headers.length > 0
+        ? `Couldn't find a review text column in this file. Columns found: ${parsed.headers.join(", ")}`
         : "This file appears to be empty.";
     console.warn("[analysisService] no reviews extracted:", message);
     const error = new Error(message);
     error.status = 400;
     throw error;
   }
+
+  return parsed;
+}
+
+// Parses and validates an upload without running any AI calls, so the
+// client can show an accurate review count while analysis is still
+// in flight.
+export async function previewUpload(buffer, filename) {
+  console.log("[analysisService] previewUpload called for:", filename, buffer.length, "bytes");
+  const { product, reviews, detectedTextColumn } = await parseAndValidateUpload(buffer, filename);
+  return { product, reviewCount: reviews.length, detectedTextColumn };
+}
+
+export async function analyzeUploadedFile(buffer, filename) {
+  console.log("[analysisService] analyzeUploadedFile called for:", filename, buffer.length, "bytes");
+  const { product, reviews, detectedTextColumn } = await parseAndValidateUpload(buffer, filename);
 
   console.log("[analysisService] running AI analysis on", reviews.length, "reviews...");
   const result = await runAnalysis(product, reviews);
