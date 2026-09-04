@@ -26,4 +26,5 @@ export interface AnalysisResult {
   consumerLanguage: ConsumerLanguageGroup[];
   adAngles: AdAngle[];
   strategyNotes: string;
+  detectedTextColumn?: string | null;
 }
