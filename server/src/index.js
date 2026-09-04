@@ -1,6 +1,15 @@
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import express from "express";
 import cors from "cors";
 import analyzeRouter from "./routes/analyze.js";
+
+try {
+  const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.env");
+  process.loadEnvFile(envPath);
+} catch {
+  // No server/.env present — fall back to real environment variables.
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;

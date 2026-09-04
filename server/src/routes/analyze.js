@@ -20,8 +20,13 @@ router.post("/analyze", async (req, res) => {
     });
   }
 
-  const result = await analyzeAsin(asin.trim().toUpperCase());
-  res.json(result);
+  try {
+    const result = await analyzeAsin(asin.trim().toUpperCase());
+    res.json(result);
+  } catch (err) {
+    console.error("[route:/analyze] analyzeAsin threw:", err);
+    res.status(err.status ?? 502).json({ error: err.message });
+  }
 });
 
 router.post("/analyze/upload", upload.single("file"), async (req, res) => {
@@ -43,7 +48,7 @@ router.post("/analyze/upload", upload.single("file"), async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error("[route:/analyze/upload] analyzeUploadedFile threw:", err);
-    res.status(err.status ?? 400).json({ error: err.message });
+    res.status(err.status ?? 502).json({ error: err.message });
   }
 });
 

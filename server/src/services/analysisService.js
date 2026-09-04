@@ -18,6 +18,7 @@ async function runAnalysis(product, reviews) {
   const consumerLanguage = await extractConsumerLanguage({
     productTitle: product.title,
     reviews,
+    painPoints,
   });
   const adAngles = await generateAdAngles({
     productTitle: product.title,
