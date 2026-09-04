@@ -4,15 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: "#FAFAF8",
+        paper: "#FFFFFF",
         card: "#FFFFFF",
         ink: "#2C2C2C",
         muted: "#6B6660",
-        line: "#E8E2D9",
+        line: "#D0D0D0",
         accent: {
-          DEFAULT: "#B5563C",
-          dark: "#96482F",
-          soft: "#F4E7E0",
+          DEFAULT: "#E86C47",
+          dark: "#C24E2C",
+          soft: "#FCE8E1",
         },
         danger: {
           DEFAULT: "#9B3B2E",

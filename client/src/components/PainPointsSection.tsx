@@ -1,6 +1,9 @@
 import type { PainPoint } from "../types";
+import { useLocale } from "../i18n/LocaleContext";
 
 export default function PainPointsSection({ painPoints }: { painPoints: PainPoint[] }) {
+  const { t } = useLocale();
+
   return (
     <ul className="space-y-5">
       {painPoints.map((point) => (
@@ -8,7 +11,7 @@ export default function PainPointsSection({ painPoints }: { painPoints: PainPoin
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-ink">{point.theme}</span>
             <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent-dark">
-              {point.frequency} mentions
+              {t("common.mentions", { count: point.frequency })}
             </span>
           </div>
           <p className="mt-1 text-sm leading-relaxed text-muted">{point.description}</p>

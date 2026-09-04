@@ -1,8 +1,10 @@
 import { useState } from "react";
 import AsinForm from "./components/AsinForm";
 import FileUploadZone from "./components/FileUploadZone";
+import LanguageToggle from "./components/LanguageToggle";
 import ResultsDisplay from "./components/ResultsDisplay";
 import StatusBanner, { type AnalysisStatus } from "./components/StatusBanner";
+import { useLocale } from "./i18n/LocaleContext";
 import { analyzeAsin, analyzeUploadedFile, previewUploadedFile } from "./api/analyze";
 import type { AnalysisResult } from "./types";
 
@@ -16,6 +18,7 @@ function wait(ms: number) {
 }
 
 export default function App() {
+  const { t } = useLocale();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [status, setStatus] = useState<AnalysisStatus>("idle");
   const [reviewCount, setReviewCount] = useState<number | null>(null);
@@ -70,12 +73,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-paper">
+      <div className="h-1 bg-accent print:hidden" />
+      <LanguageToggle />
+
       <div className="mx-auto max-w-content px-6 py-16 sm:px-8">
         <header className="mb-14 print:hidden">
           <h1 className="text-4xl text-ink">Hookminer</h1>
-          <p className="mt-3 text-lg leading-relaxed text-muted">
-            Upload a reviews CSV or XLSX export to mine pain points, consumer language, and ad angles.
-          </p>
+          <p className="mt-3 text-lg leading-relaxed text-muted">{t("app.subtitle")}</p>
         </header>
 
         <div className="mb-10 space-y-6 rounded-lg bg-card p-10 shadow-soft print:hidden">
@@ -83,7 +87,7 @@ export default function App() {
 
           <div className="flex items-center gap-4 text-xs uppercase tracking-widest text-muted">
             <div className="h-px flex-1 bg-line" />
-            or try the demo
+            {t("app.orTryDemo")}
             <div className="h-px flex-1 bg-line" />
           </div>
 
@@ -96,10 +100,10 @@ export default function App() {
           <>
             <p className="mb-6 text-sm text-muted print:hidden">
               {source === "upload"
-                ? `Showing analysis of your uploaded file${
-                    result.detectedTextColumn ? ` (review text read from column "${result.detectedTextColumn}")` : ""
-                  }.`
-                : "Showing demo data (garden pruning shears)."}
+                ? result.detectedTextColumn
+                  ? t("results.showingUploadWithColumn", { column: result.detectedTextColumn })
+                  : t("results.showingUploadNoColumn")
+                : t("results.showingDemo")}
             </p>
             <ResultsDisplay result={result} />
           </>

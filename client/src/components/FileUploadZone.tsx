@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useLocale } from "../i18n/LocaleContext";
 
 interface FileUploadZoneProps {
   onFileSelected: (file: File) => void;
@@ -9,6 +10,7 @@ interface FileUploadZoneProps {
 const ACCEPTED_EXTENSIONS = [".csv", ".xlsx", ".xls"];
 
 export default function FileUploadZone({ onFileSelected, isLoading, fileName }: FileUploadZoneProps) {
+  const { t } = useLocale();
   const [isDragOver, setIsDragOver] = useState(false);
   const [rejectionMessage, setRejectionMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +25,7 @@ export default function FileUploadZone({ onFileSelected, isLoading, fileName }: 
       file.name.toLowerCase().endsWith(ext)
     );
     if (!hasValidExtension) {
-      const message = `"${file.name}" isn't a .csv, .xlsx, or .xls file.`;
+      const message = t("upload.rejected", { fileName: file.name });
       console.warn(`[FileUploadZone] rejected: ${message}`);
       setRejectionMessage(message);
       return;
@@ -69,12 +71,12 @@ export default function FileUploadZone({ onFileSelected, isLoading, fileName }: 
       />
       <p className="text-ink">
         {isLoading
-          ? "Analyzing…"
+          ? t("upload.analyzing")
           : fileName
-          ? `Uploaded: ${fileName}`
-          : "Drag & drop a reviews CSV or XLSX file, or click to browse"}
+          ? t("upload.uploadedFile", { fileName })
+          : t("upload.dropPrompt")}
       </p>
-      <p className="mt-2 text-sm text-muted">Accepts .csv, .xlsx, .xls</p>
+      <p className="mt-2 text-sm text-muted">{t("upload.accepts")}</p>
       {rejectionMessage && <p className="mt-3 text-sm text-danger">{rejectionMessage}</p>}
     </div>
   );

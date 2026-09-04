@@ -3,6 +3,9 @@
 // extra API call, since the four sections already contain everything needed.
 
 import type { AdAngle, AnalysisResult, PainPoint } from "../types";
+import type { TranslationKey } from "../i18n/translations";
+
+type Translate = (key: TranslationKey, params?: Record<string, string | number>) => string;
 
 export interface TopFinding {
   topPainPoint: PainPoint;
@@ -37,46 +40,56 @@ export function buildRecommendations(topFinding: TopFinding): string[] {
   ];
 }
 
+// Section-header labels follow the current UI language; the underlying
+// analysis data (themes, descriptions, phrases, hooks, strategy notes) is
+// copied verbatim, exactly as returned by the API.
 export function formatReportText(
   result: AnalysisResult,
   topFinding: TopFinding | null,
-  recommendations: string[]
+  recommendations: string[],
+  t: Translate
 ): string {
   const lines: string[] = [];
 
-  lines.push("HOOKMINER ANALYSIS REPORT");
-  lines.push(`Product: ${result.product.title} (ASIN: ${result.product.asin})`);
-  lines.push(`Reviews analyzed: ${result.reviewCount}`);
+  lines.push(t("report.title"));
+  lines.push(t("report.product", { title: result.product.title, asin: result.product.asin }));
+  lines.push(t("report.reviewsAnalyzed", { count: result.reviewCount }));
   lines.push("");
 
   if (topFinding) {
-    lines.push("TOP FINDING");
-    lines.push(`- Pain point: ${topFinding.topPainPoint.theme} (${topFinding.topPainPoint.frequency} mentions)`);
-    if (topFinding.bestAdAngle) lines.push(`- Best ad angle: "${topFinding.bestAdAngle.hook}"`);
-    if (topFinding.keyQuote) lines.push(`- Key consumer quote: "${topFinding.keyQuote}"`);
+    lines.push(t("report.topFinding"));
+    lines.push(
+      `- ${t("report.painPointLabel")}: ${topFinding.topPainPoint.theme} (${t("common.mentions", {
+        count: topFinding.topPainPoint.frequency,
+      })})`
+    );
+    if (topFinding.bestAdAngle) lines.push(`- ${t("report.adAngleLabel")}: "${topFinding.bestAdAngle.hook}"`);
+    if (topFinding.keyQuote) lines.push(`- ${t("report.quoteLabel")}: "${topFinding.keyQuote}"`);
     lines.push("");
   }
 
-  lines.push("WHAT TO DO NEXT (下一步建议)");
+  lines.push(t("report.whatToDoNext"));
   recommendations.forEach((r) => lines.push(`- ${r}`));
   lines.push("");
 
-  lines.push("CLUSTERED PAIN POINTS");
-  result.painPoints.forEach((p) => lines.push(`- ${p.theme} (${p.frequency} mentions): ${p.description}`));
+  lines.push(t("report.painPoints"));
+  result.painPoints.forEach((p) =>
+    lines.push(`- ${p.theme} (${t("common.mentions", { count: p.frequency })}): ${p.description}`)
+  );
   lines.push("");
 
-  lines.push("CONSUMER LANGUAGE");
+  lines.push(t("report.consumerLanguage"));
   result.consumerLanguage.forEach((c) => {
     lines.push(`- ${c.theme}:`);
     c.phrases.forEach((phrase) => lines.push(`    "${phrase}"`));
   });
   lines.push("");
 
-  lines.push("AD ANGLES");
-  result.adAngles.forEach((a) => lines.push(`- "${a.hook}" (targets: ${a.targetsTheme})`));
+  lines.push(t("report.adAngles"));
+  result.adAngles.forEach((a) => lines.push(`- "${a.hook}" (${t("adAngles.targets", { theme: a.targetsTheme })})`));
   lines.push("");
 
-  lines.push("STRATEGY NOTES (策略笔记)");
+  lines.push(t("report.strategyNotes"));
   lines.push(result.strategyNotes);
 
   return lines.join("\n");

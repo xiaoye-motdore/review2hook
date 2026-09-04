@@ -1,3 +1,5 @@
+import { useLocale } from "../i18n/LocaleContext";
+
 export type AnalysisStatus = "idle" | "uploaded" | "analyzing" | "complete" | "error";
 
 interface StatusBannerProps {
@@ -33,13 +35,15 @@ function Spinner() {
 }
 
 export default function StatusBanner({ status, reviewCount, errorMessage }: StatusBannerProps) {
+  const { t } = useLocale();
+
   if (status === "idle" || status === "complete") return null;
 
   if (status === "uploaded") {
     return (
       <div className="mb-8 flex items-center gap-3 rounded-lg bg-accent-soft px-5 py-4 text-accent-dark print:hidden">
         <CheckIcon />
-        <span>File uploaded ✓{reviewCount != null ? ` — ${reviewCount} reviews found` : ""}</span>
+        <span>{reviewCount != null ? t("status.uploaded", { count: reviewCount }) : t("status.uploadedNoCount")}</span>
       </div>
     );
   }
@@ -48,7 +52,9 @@ export default function StatusBanner({ status, reviewCount, errorMessage }: Stat
     return (
       <div className="mb-8 flex items-center gap-3 rounded-lg bg-ink/5 px-5 py-4 text-ink print:hidden">
         <Spinner />
-        <span>{reviewCount != null ? `Analyzing ${reviewCount} reviews…` : "Analyzing reviews…"}</span>
+        <span>
+          {reviewCount != null ? t("status.analyzing", { count: reviewCount }) : t("status.analyzingNoCount")}
+        </span>
       </div>
     );
   }

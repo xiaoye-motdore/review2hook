@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useLocale } from "../i18n/LocaleContext";
 
 export default function ExportBar({ reportText }: { reportText: string }) {
+  const { t } = useLocale();
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -20,14 +22,14 @@ export default function ExportBar({ reportText }: { reportText: string }) {
         onClick={handleCopy}
         className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
       >
-        {copied ? "Copied ✓" : "Copy Report"}
+        {copied ? t("export.copied") : t("export.copyReport")}
       </button>
       <button
         type="button"
         onClick={() => window.print()}
         className="rounded-lg bg-ink/5 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/10"
       >
-        Download PDF
+        {t("export.downloadPdf")}
       </button>
     </div>
   );
