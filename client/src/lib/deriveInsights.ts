@@ -35,33 +35,43 @@ export interface RecommendationCard {
   evidence: string[];
 }
 
+// Defense in depth for the instruction/evidence split: even though the
+// instruction templates below are written as pure Chinese literals with no
+// interpolated English, this scans the final text and yanks out any Latin-
+// script runs into evidence anyway, so a future edit that accidentally
+// interpolates raw data into an instruction can't reintroduce mixed text.
+const LATIN_SEGMENT = /[A-Za-z0-9][A-Za-z0-9'".,!?;:()&/-]*(?:\s+[A-Za-z0-9'".,!?;:()&/-]+)*/g;
+
+export function splitLatinContent(rawText: string): { chinese: string; latinFragments: string[] } {
+  const latinFragments: string[] = [];
+  const chinese = rawText
+    .replace(LATIN_SEGMENT, (match) => {
+      const trimmed = match.trim();
+      if (trimmed) latinFragments.push(trimmed);
+      return "";
+    })
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  return { chinese, latinFragments };
+}
+
+function buildCard(rawInstruction: string, baseEvidence: string[]): RecommendationCard {
+  const { chinese, latinFragments } = splitLatinContent(rawInstruction);
+  return { instruction: chinese, evidence: [...baseEvidence, ...latinFragments] };
+}
+
 export function buildRecommendations(topFinding: TopFinding): RecommendationCard[] {
   const { topPainPoint, bestAdAngle, keyQuote } = topFinding;
 
-  const adAngleCard: RecommendationCard = bestAdAngle
-    ? {
-        instruction: "优先测试这条广告角度，直接针对当前最主要的用户痛点。",
-        evidence: [bestAdAngle.hook, topPainPoint.theme],
-      }
-    : {
-        instruction: "优先针对最主要的用户痛点，设计并测试新的广告角度。",
-        evidence: [topPainPoint.theme],
-      };
+  const adAngleCard = bestAdAngle
+    ? buildCard("优先测试这条广告角度，直接针对当前最主要的用户痛点。", [bestAdAngle.hook, topPainPoint.theme])
+    : buildCard("优先针对最主要的用户痛点，设计并测试新的广告角度。", [topPainPoint.theme]);
 
-  const weaknessCard: RecommendationCard = {
-    instruction: "优先改进这项产品短板。",
-    evidence: [topPainPoint.theme, topPainPoint.description],
-  };
+  const weaknessCard = buildCard("优先改进这项产品短板。", [topPainPoint.theme, topPainPoint.description]);
 
-  const quoteCard: RecommendationCard = keyQuote
-    ? {
-        instruction: "建议在广告文案中直接使用这句真实用户原话，增强可信度。",
-        evidence: [keyQuote],
-      }
-    : {
-        instruction: "建议从「消费者原声」板块中挑选真实用户用语，用于广告文案，增强可信度。",
-        evidence: [],
-      };
+  const quoteCard = keyQuote
+    ? buildCard("建议在广告文案中直接使用这句真实用户原话，增强可信度。", [keyQuote])
+    : buildCard("建议从「消费者原声」板块中挑选真实用户用语，用于广告文案，增强可信度。", []);
 
   return [adAngleCard, weaknessCard, quoteCard];
 }

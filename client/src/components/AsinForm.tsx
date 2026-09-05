@@ -28,7 +28,7 @@ export default function AsinForm({ onSubmit, isLoading }: AsinFormProps) {
       />
       <button
         type="submit"
-        disabled={isLoading || !asin.trim()}
+        disabled={isLoading}
         className="rounded-lg bg-accent px-6 py-3 font-medium text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-muted/40"
       >
         {isLoading ? t("asinForm.analyzing") : t("asinForm.analyze")}

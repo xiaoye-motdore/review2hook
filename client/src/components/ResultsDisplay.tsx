@@ -40,7 +40,7 @@ export default function ResultsDisplay({ result }: { result: AnalysisResult }) {
       {recommendations.length > 0 && <Recommendations recommendations={recommendations} />}
 
       <div className="space-y-5">
-        <Accordion title={t("accordion.painPoints")}>
+        <Accordion title={t("accordion.painPoints")} defaultOpen>
           <PainPointsSection painPoints={result.painPoints} />
         </Accordion>
         <Accordion title={t("accordion.consumerLanguage")}>

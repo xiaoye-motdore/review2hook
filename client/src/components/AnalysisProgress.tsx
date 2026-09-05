@@ -2,12 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleContext";
 import { ANALYSIS_STEP_KEYS, STEP_DURATION_MS } from "../lib/progressSteps";
 
-interface AnalysisProgressProps {
-  // Whether to show the leading "File uploaded successfully" step. Only
-  // meaningful for the file-upload flow — the ASIN demo flow has no file.
-  includeUploadStep: boolean;
-}
-
 function CheckIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
@@ -44,7 +38,7 @@ function StepRow({ done, children }: { done: boolean; children: ReactNode }) {
   );
 }
 
-export default function AnalysisProgress({ includeUploadStep }: AnalysisProgressProps) {
+export default function AnalysisProgress() {
   const { t } = useLocale();
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -62,9 +56,8 @@ export default function AnalysisProgress({ includeUploadStep }: AnalysisProgress
   const visibleSteps = ANALYSIS_STEP_KEYS.slice(0, currentStep + 1);
 
   return (
-    <div className="mb-8 rounded-lg bg-ink/5 px-5 py-5 print:hidden">
+    <div className="rounded-lg bg-ink/5 px-5 py-5 print:hidden">
       <ul className="space-y-3">
-        {includeUploadStep && <StepRow done>{t("progress.uploaded")}</StepRow>}
         {visibleSteps.map((key, index) => (
           <StepRow key={key} done={index < currentStep}>
             {t(key)}

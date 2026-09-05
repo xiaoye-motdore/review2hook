@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import AnalysisProgress from "./components/AnalysisProgress";
 import AsinForm from "./components/AsinForm";
 import EmptyStatePreview from "./components/EmptyStatePreview";
 import FileUploadZone from "./components/FileUploadZone";
@@ -26,6 +27,18 @@ function TrustIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0 text-accent">
+      <path
+        fillRule="evenodd"
+        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
 export default function App() {
   const { t } = useLocale();
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -33,9 +46,6 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<"demo" | "upload" | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  // Which progress list to show while status === "analyzing" — the upload
-  // flow gets the extra "File uploaded successfully" leading step.
-  const [progressKind, setProgressKind] = useState<"upload" | "demo">("upload");
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const isBusy = status === "analyzing";
@@ -52,7 +62,6 @@ export default function App() {
     setError(null);
     setResult(null);
     setFileName(null);
-    setProgressKind("demo");
     setStatus("analyzing");
     try {
       // Race against a minimum display time so the progress animation is
@@ -72,7 +81,6 @@ export default function App() {
     setError(null);
     setResult(null);
     setFileName(file.name);
-    setProgressKind("upload");
     setStatus("idle");
 
     try {
@@ -107,19 +115,34 @@ export default function App() {
           </p>
         </header>
 
-        <div className="mb-10 space-y-6 rounded-lg bg-card p-10 shadow-soft print:hidden">
-          <FileUploadZone onFileSelected={handleFileSelected} isLoading={isBusy} fileName={fileName} />
-
-          <div className="flex items-center gap-4 text-xs uppercase tracking-widest text-muted">
-            <div className="h-px flex-1 bg-line" />
-            {t("app.orTryDemo")}
-            <div className="h-px flex-1 bg-line" />
+        {isBusy ? (
+          // Collapsed: the full form (dropzone + demo form) would push the
+          // progress steps below the fold. Swapping to this compact summary
+          // keeps "something is happening" visible without scrolling.
+          <div className="mb-10 space-y-5 rounded-lg bg-card p-6 shadow-soft print:hidden">
+            {fileName && (
+              <div className="flex items-center gap-2 text-sm text-ink">
+                <CheckIcon />
+                {t("upload.collapsedUploaded", { fileName })}
+              </div>
+            )}
+            <AnalysisProgress />
           </div>
+        ) : (
+          <div className="mb-10 space-y-6 rounded-lg bg-card p-10 shadow-soft print:hidden">
+            <FileUploadZone onFileSelected={handleFileSelected} isLoading={isBusy} fileName={fileName} />
 
-          <AsinForm onSubmit={handleAsinSubmit} isLoading={isBusy} />
-        </div>
+            <div className="flex items-center gap-4 text-xs uppercase tracking-widest text-muted">
+              <div className="h-px flex-1 bg-line" />
+              {t("app.orTryDemo")}
+              <div className="h-px flex-1 bg-line" />
+            </div>
 
-        <StatusBanner status={status} includeUploadStep={progressKind === "upload"} errorMessage={error} />
+            <AsinForm onSubmit={handleAsinSubmit} isLoading={isBusy} />
+          </div>
+        )}
+
+        <StatusBanner status={status} errorMessage={error} />
 
         {!result && !isBusy && <EmptyStatePreview />}
 

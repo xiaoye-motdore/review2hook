@@ -20,7 +20,8 @@ export const translations = {
     "upload.analyzing": "Analyzing…",
     "upload.rejected": '"{{fileName}}" isn\'t a .csv, .xlsx, or .xls file.',
 
-    "progress.uploaded": "File uploaded successfully",
+    "upload.collapsedUploaded": "{{fileName}} uploaded",
+
     "progress.reading": "Reading reviews…",
     "progress.clustering": "Clustering pain points…",
     "progress.extracting": "Extracting consumer language…",
@@ -30,7 +31,9 @@ export const translations = {
     "results.completeBanner":
       "✓ Analysis complete — {{reviewCount}} reviews analyzed, {{painPointCount}} pain points found, {{adAngleCount}} ad angles generated.",
 
-    "emptyState.overlay": "Upload reviews to see your analysis",
+    "emptyState.title": "See what your customers really think",
+    "emptyState.subtitle":
+      "Upload a review file to get pain points, ad angles, and strategy notes — ready to use.",
 
     "results.showingUploadWithColumn":
       'Showing analysis of your uploaded file (review text read from column "{{column}}").',
@@ -55,6 +58,8 @@ export const translations = {
     "accordion.consumerLanguage": "Consumer Language",
     "accordion.adAngles": "Ad Angles",
     "accordion.strategyNotes": "Strategy Notes",
+    "accordion.clickToExpand": "Click to expand",
+    "accordion.clickToCollapse": "Click to collapse",
 
     "adAngles.targets": "targets: {{theme}}",
 
@@ -86,7 +91,8 @@ export const translations = {
     "upload.analyzing": "分析中…",
     "upload.rejected": "“{{fileName}}” 不是 .csv、.xlsx 或 .xls 文件。",
 
-    "progress.uploaded": "文件上传成功",
+    "upload.collapsedUploaded": "{{fileName}} 已上传",
+
     "progress.reading": "正在读取评论…",
     "progress.clustering": "正在聚类痛点…",
     "progress.extracting": "正在提取消费者语言…",
@@ -95,7 +101,8 @@ export const translations = {
 
     "results.completeBanner": "✓ 分析完成 — 已分析 {{reviewCount}} 条评论，发现 {{painPointCount}} 个痛点，生成 {{adAngleCount}} 个广告角度。",
 
-    "emptyState.overlay": "上传评论即可查看您的分析结果",
+    "emptyState.title": "看清客户的真实想法",
+    "emptyState.subtitle": "上传评论文件，即可获得可直接使用的用户痛点、广告角度和策略笔记。",
 
     "results.showingUploadWithColumn": "正在显示您上传文件的分析结果（评论文本读取自列 “{{column}}”）。",
     "results.showingUploadNoColumn": "正在显示您上传文件的分析结果。",
@@ -119,6 +126,8 @@ export const translations = {
     "accordion.consumerLanguage": "消费者语言",
     "accordion.adAngles": "广告角度",
     "accordion.strategyNotes": "策略笔记",
+    "accordion.clickToExpand": "点击展开",
+    "accordion.clickToCollapse": "点击收起",
 
     "adAngles.targets": "针对：{{theme}}",
 

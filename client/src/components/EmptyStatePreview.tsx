@@ -1,38 +1,25 @@
 import { useLocale } from "../i18n/LocaleContext";
-import TopFinding from "./TopFinding";
-import Recommendations from "./Recommendations";
-import { buildRecommendations, type TopFinding as TopFindingData } from "../lib/deriveInsights";
 
-// Static sample content — purely illustrative, never real analysis data.
-const SAMPLE_TOP_FINDING: TopFindingData = {
-  topPainPoint: {
-    theme: "Battery drains fast",
-    frequency: 6,
-    description: "Customers report the battery dies quickly during moderate use.",
-  },
-  bestAdAngle: {
-    hook: "All-day power that outlasts the job, not just the box.",
-    targetsTheme: "Battery drains fast",
-  },
-  keyQuote: "died after 10 minutes of use",
-};
-
-const SAMPLE_RECOMMENDATIONS = buildRecommendations(SAMPLE_TOP_FINDING);
+function ChartIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className="h-8 w-8 text-accent">
+      <rect x="3" y="12" width="4" height="9" rx="1" fill="currentColor" opacity="0.5" />
+      <rect x="10" y="7" width="4" height="14" rx="1" fill="currentColor" opacity="0.75" />
+      <rect x="17" y="3" width="4" height="18" rx="1" fill="currentColor" />
+    </svg>
+  );
+}
 
 export default function EmptyStatePreview() {
   const { t } = useLocale();
 
   return (
-    <div className="relative mt-4">
-      <div aria-hidden="true" className="pointer-events-none select-none space-y-8 opacity-50 blur-[2px]">
-        <TopFinding topFinding={SAMPLE_TOP_FINDING} />
-        <Recommendations recommendations={SAMPLE_RECOMMENDATIONS} />
+    <div className="flex flex-col items-center gap-5 rounded-lg bg-card px-6 py-20 text-center shadow-soft">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft">
+        <ChartIcon />
       </div>
-      <div className="absolute inset-0 flex items-center justify-center px-6">
-        <p className="rounded-lg bg-card px-6 py-3 text-center font-serif text-lg text-ink shadow-soft">
-          {t("emptyState.overlay")}
-        </p>
-      </div>
+      <h2 className="font-serif text-2xl text-ink">{t("emptyState.title")}</h2>
+      <p className="max-w-sm text-base leading-relaxed text-muted">{t("emptyState.subtitle")}</p>
     </div>
   );
 }
