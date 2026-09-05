@@ -26,51 +26,52 @@ export function deriveTopFinding(result: AnalysisResult): TopFinding | null {
   return { topPainPoint, bestAdAngle, keyQuote };
 }
 
-// A recommendation is Chinese narrative text (the strategy) interleaved
-// with short tagged spans of raw English data (the evidence — pain point
-// labels, ad angle hooks, consumer quotes) so the two never blur together.
-export type RecommendationPart = { kind: "text"; content: string } | { kind: "tag"; content: string };
-export type RecommendationLine = RecommendationPart[];
-
-function text(content: string): RecommendationPart {
-  return { kind: "text", content };
+// Each recommendation is a pure-Chinese instruction (the strategy) plus a
+// separate list of raw English evidence strings (pain point labels, ad
+// angle hooks, consumer quotes, descriptions) to render in a visually
+// distinct block below it — never interleaved into the same sentence.
+export interface RecommendationCard {
+  instruction: string;
+  evidence: string[];
 }
 
-function tag(content: string): RecommendationPart {
-  return { kind: "tag", content };
-}
-
-export function buildRecommendations(topFinding: TopFinding): RecommendationLine[] {
+export function buildRecommendations(topFinding: TopFinding): RecommendationCard[] {
   const { topPainPoint, bestAdAngle, keyQuote } = topFinding;
 
-  const adAngleLine: RecommendationLine = bestAdAngle
-    ? [
-        text("优先测试这条广告角度："),
-        tag(bestAdAngle.hook),
-        text("——直接针对当前最主要的用户痛点 "),
-        tag(topPainPoint.theme),
-        text("。"),
-      ]
-    : [text("优先针对最主要的用户痛点 "), tag(topPainPoint.theme), text(" 设计并测试新的广告角度。")];
+  const adAngleCard: RecommendationCard = bestAdAngle
+    ? {
+        instruction: "优先测试这条广告角度，直接针对当前最主要的用户痛点。",
+        evidence: [bestAdAngle.hook, topPainPoint.theme],
+      }
+    : {
+        instruction: "优先针对最主要的用户痛点，设计并测试新的广告角度。",
+        evidence: [topPainPoint.theme],
+      };
 
-  const weaknessLine: RecommendationLine = [
-    text("优先改进的产品短板："),
-    tag(topPainPoint.theme),
-    text("——"),
-    tag(topPainPoint.description),
-  ];
+  const weaknessCard: RecommendationCard = {
+    instruction: "优先改进这项产品短板。",
+    evidence: [topPainPoint.theme, topPainPoint.description],
+  };
 
-  const quoteLine: RecommendationLine = keyQuote
-    ? [text("建议在广告文案中直接使用这句真实用户原话，增强可信度："), tag(keyQuote)]
-    : [text("建议从「消费者原声」板块中挑选真实用户用语，用于广告文案，增强可信度。")];
+  const quoteCard: RecommendationCard = keyQuote
+    ? {
+        instruction: "建议在广告文案中直接使用这句真实用户原话，增强可信度。",
+        evidence: [keyQuote],
+      }
+    : {
+        instruction: "建议从「消费者原声」板块中挑选真实用户用语，用于广告文案，增强可信度。",
+        evidence: [],
+      };
 
-  return [adAngleLine, weaknessLine, quoteLine];
+  return [adAngleCard, weaknessCard, quoteCard];
 }
 
-// Flattens a recommendation line to plain text for the Copy Report export,
-// where tags can't be styled — quoting them keeps the evidence recognizable.
-export function flattenRecommendationLine(line: RecommendationLine): string {
-  return line.map((part) => (part.kind === "tag" ? `"${part.content}"` : part.content)).join("");
+// Flattens a recommendation to plain text for the Copy Report export, where
+// the visual instruction/evidence separation can't survive into clipboard
+// text — quoting the evidence keeps it recognizable as raw source material.
+export function flattenRecommendationCard(card: RecommendationCard): string {
+  if (card.evidence.length === 0) return card.instruction;
+  return `${card.instruction} ${card.evidence.map((e) => `"${e}"`).join(" / ")}`;
 }
 
 // Section-header labels follow the current UI language; the underlying
@@ -79,7 +80,7 @@ export function flattenRecommendationLine(line: RecommendationLine): string {
 export function formatReportText(
   result: AnalysisResult,
   topFinding: TopFinding | null,
-  recommendations: RecommendationLine[],
+  recommendations: RecommendationCard[],
   t: Translate
 ): string {
   const lines: string[] = [];
@@ -102,7 +103,7 @@ export function formatReportText(
   }
 
   lines.push(t("report.whatToDoNext"));
-  recommendations.forEach((line) => lines.push(`- ${flattenRecommendationLine(line)}`));
+  recommendations.forEach((card) => lines.push(`- ${flattenRecommendationCard(card)}`));
   lines.push("");
 
   lines.push(t("report.painPoints"));

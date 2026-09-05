@@ -20,8 +20,7 @@ export const translations = {
     "upload.analyzing": "Analyzing…",
     "upload.rejected": '"{{fileName}}" isn\'t a .csv, .xlsx, or .xls file.',
 
-    "status.uploaded": "File uploaded ✓ — {{count}} reviews found",
-    "status.uploadedNoCount": "File uploaded ✓",
+    "progress.uploaded": "File uploaded successfully",
     "progress.reading": "Reading reviews…",
     "progress.clustering": "Clustering pain points…",
     "progress.extracting": "Extracting consumer language…",
@@ -87,8 +86,7 @@ export const translations = {
     "upload.analyzing": "分析中…",
     "upload.rejected": "“{{fileName}}” 不是 .csv、.xlsx 或 .xls 文件。",
 
-    "status.uploaded": "文件已上传 ✓ — 找到 {{count}} 条评论",
-    "status.uploadedNoCount": "文件已上传 ✓",
+    "progress.uploaded": "文件上传成功",
     "progress.reading": "正在读取评论…",
     "progress.clustering": "正在聚类痛点…",
     "progress.extracting": "正在提取消费者语言…",

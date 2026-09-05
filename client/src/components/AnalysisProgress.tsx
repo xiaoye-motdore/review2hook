@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleContext";
-import type { TranslationKey } from "../i18n/translations";
+import { ANALYSIS_STEP_KEYS, STEP_DURATION_MS } from "../lib/progressSteps";
 
-// Cosmetic, time-based progression — the server doesn't stream real
-// step-by-step progress, so this approximates it on a fixed clock. If the
-// real analysis finishes early the whole banner just unmounts; if it runs
-// long, the indicator holds on the last step rather than looping.
-const STEP_KEYS: TranslationKey[] = [
-  "progress.reading",
-  "progress.clustering",
-  "progress.extracting",
-  "progress.generating",
-  "progress.writing",
-];
-
-const STEP_DURATION_MS = 2000;
+interface AnalysisProgressProps {
+  // Whether to show the leading "File uploaded successfully" step. Only
+  // meaningful for the file-upload flow — the ASIN demo flow has no file.
+  includeUploadStep: boolean;
+}
 
 function CheckIcon() {
   return (
@@ -37,39 +29,47 @@ function StepSpinner() {
   );
 }
 
-export default function AnalysisProgress() {
+function StepRow({ done, children }: { done: boolean; children: ReactNode }) {
+  return (
+    <li className="flex animate-step-in items-center gap-3 text-sm">
+      <span
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+          done ? "bg-accent text-white" : "text-accent"
+        }`}
+      >
+        {done ? <CheckIcon /> : <StepSpinner />}
+      </span>
+      <span className={done ? "text-muted" : "font-medium text-ink"}>{children}</span>
+    </li>
+  );
+}
+
+export default function AnalysisProgress({ includeUploadStep }: AnalysisProgressProps) {
   const { t } = useLocale();
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
     setCurrentStep(0);
-    const timers = STEP_KEYS.slice(1).map((_, i) =>
+    const timers = ANALYSIS_STEP_KEYS.slice(1).map((_, i) =>
       setTimeout(() => setCurrentStep(i + 1), STEP_DURATION_MS * (i + 1))
     );
     return () => timers.forEach(clearTimeout);
   }, []);
 
+  // Steps are only added to the DOM as they're reached (not pre-rendered
+  // and re-styled) so each one's entrance animation actually plays when it
+  // appears, rather than all of them animating together on first mount.
+  const visibleSteps = ANALYSIS_STEP_KEYS.slice(0, currentStep + 1);
+
   return (
     <div className="mb-8 rounded-lg bg-ink/5 px-5 py-5 print:hidden">
       <ul className="space-y-3">
-        {STEP_KEYS.map((key, index) => {
-          const isDone = index < currentStep;
-          const isActive = index === currentStep;
-          return (
-            <li key={key} className="flex items-center gap-3 text-sm">
-              <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                  isDone ? "bg-accent text-white" : "text-accent"
-                }`}
-              >
-                {isDone ? <CheckIcon /> : isActive ? <StepSpinner /> : <span className="h-1.5 w-1.5 rounded-full bg-line" />}
-              </span>
-              <span className={isDone ? "text-muted" : isActive ? "font-medium text-ink" : "text-muted/50"}>
-                {t(key)}
-              </span>
-            </li>
-          );
-        })}
+        {includeUploadStep && <StepRow done>{t("progress.uploaded")}</StepRow>}
+        {visibleSteps.map((key, index) => (
+          <StepRow key={key} done={index < currentStep}>
+            {t(key)}
+          </StepRow>
+        ))}
       </ul>
     </div>
   );

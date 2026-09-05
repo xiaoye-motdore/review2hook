@@ -7,12 +7,8 @@ import ResultsDisplay from "./components/ResultsDisplay";
 import StatusBanner, { type AnalysisStatus } from "./components/StatusBanner";
 import { useLocale } from "./i18n/LocaleContext";
 import { analyzeAsin, analyzeUploadedFile, previewUploadedFile } from "./api/analyze";
+import { MIN_ANALYSIS_DISPLAY_MS } from "./lib/progressSteps";
 import type { AnalysisResult } from "./types";
-
-// Brief pause so the "File uploaded" state is actually perceivable before
-// the UI moves on to "Analyzing" — without it the two state updates land
-// in the same React render and the first is never painted.
-const UPLOADED_STATE_PAUSE_MS = 600;
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,13 +30,15 @@ export default function App() {
   const { t } = useLocale();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [status, setStatus] = useState<AnalysisStatus>("idle");
-  const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<"demo" | "upload" | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  // Which progress list to show while status === "analyzing" — the upload
+  // flow gets the extra "File uploaded successfully" leading step.
+  const [progressKind, setProgressKind] = useState<"upload" | "demo">("upload");
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const isBusy = status === "uploaded" || status === "analyzing";
+  const isBusy = status === "analyzing";
 
   // Auto-scroll to the results as soon as a fresh analysis lands, so the
   // user doesn't have to scroll down manually to see it.
@@ -54,10 +52,12 @@ export default function App() {
     setError(null);
     setResult(null);
     setFileName(null);
-    setReviewCount(null);
+    setProgressKind("demo");
     setStatus("analyzing");
     try {
-      const data = await analyzeAsin(asin);
+      // Race against a minimum display time so the progress animation is
+      // always fully visible, even when the real call resolves in a flash.
+      const [data] = await Promise.all([analyzeAsin(asin), wait(MIN_ANALYSIS_DISPLAY_MS)]);
       setResult(data);
       setSource("demo");
       setStatus("complete");
@@ -72,17 +72,16 @@ export default function App() {
     setError(null);
     setResult(null);
     setFileName(file.name);
-    setReviewCount(null);
+    setProgressKind("upload");
     setStatus("idle");
 
     try {
-      const preview = await previewUploadedFile(file);
-      setReviewCount(preview.reviewCount);
-      setStatus("uploaded");
-      await wait(UPLOADED_STATE_PAUSE_MS);
-
+      // Parse-only pass first: validates the file (and fails fast on a bad
+      // one) before the progress animation and paid AI calls start.
+      await previewUploadedFile(file);
       setStatus("analyzing");
-      const data = await analyzeUploadedFile(file);
+
+      const [data] = await Promise.all([analyzeUploadedFile(file), wait(MIN_ANALYSIS_DISPLAY_MS)]);
       setResult(data);
       setSource("upload");
       setStatus("complete");
@@ -120,7 +119,7 @@ export default function App() {
           <AsinForm onSubmit={handleAsinSubmit} isLoading={isBusy} />
         </div>
 
-        <StatusBanner status={status} reviewCount={reviewCount} errorMessage={error} />
+        <StatusBanner status={status} includeUploadStep={progressKind === "upload"} errorMessage={error} />
 
         {!result && !isBusy && <EmptyStatePreview />}
 
