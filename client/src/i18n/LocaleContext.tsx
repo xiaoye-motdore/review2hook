@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { translations, type Locale, type TranslationKey } from "./translations";
 
-const STORAGE_KEY = "hookminer_locale";
+const STORAGE_KEY = "review2hook_locale";
 
 interface LocaleContextValue {
   locale: Locale;

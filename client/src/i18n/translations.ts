@@ -63,7 +63,7 @@ export const translations = {
 
     "adAngles.targets": "targets: {{theme}}",
 
-    "report.title": "HOOKMINER ANALYSIS REPORT",
+    "report.title": "REVIEW2HOOK ANALYSIS REPORT",
     "report.product": "Product: {{title}} (ASIN: {{asin}})",
     "report.reviewsAnalyzed": "Reviews analyzed: {{count}}",
     "report.topFinding": "TOP FINDING",
@@ -131,7 +131,7 @@ export const translations = {
 
     "adAngles.targets": "针对：{{theme}}",
 
-    "report.title": "HOOKMINER 分析报告",
+    "report.title": "REVIEW2HOOK 分析报告",
     "report.product": "产品：{{title}}（ASIN：{{asin}}）",
     "report.reviewsAnalyzed": "已分析评论数：{{count}}",
     "report.topFinding": "核心发现",

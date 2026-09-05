@@ -107,7 +107,7 @@ export default function App() {
 
       <div className="mx-auto max-w-content px-6 py-16 sm:px-8">
         <header className="mb-14 print:hidden">
-          <h1 className="text-4xl text-ink">Hookminer</h1>
+          <h1 className="text-4xl text-ink">Review2Hook</h1>
           <p className="mt-3 text-lg leading-relaxed text-muted">{t("app.subtitle")}</p>
           <p className="mt-3 flex items-center gap-1.5 text-sm text-muted">
             <TrustIcon />
