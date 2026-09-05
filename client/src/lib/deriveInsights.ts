@@ -26,18 +26,51 @@ export function deriveTopFinding(result: AnalysisResult): TopFinding | null {
   return { topPainPoint, bestAdAngle, keyQuote };
 }
 
-export function buildRecommendations(topFinding: TopFinding): string[] {
+// A recommendation is Chinese narrative text (the strategy) interleaved
+// with short tagged spans of raw English data (the evidence — pain point
+// labels, ad angle hooks, consumer quotes) so the two never blur together.
+export type RecommendationPart = { kind: "text"; content: string } | { kind: "tag"; content: string };
+export type RecommendationLine = RecommendationPart[];
+
+function text(content: string): RecommendationPart {
+  return { kind: "text", content };
+}
+
+function tag(content: string): RecommendationPart {
+  return { kind: "tag", content };
+}
+
+export function buildRecommendations(topFinding: TopFinding): RecommendationLine[] {
   const { topPainPoint, bestAdAngle, keyQuote } = topFinding;
 
-  return [
-    bestAdAngle
-      ? `优先测试这条广告角度："${bestAdAngle.hook}"——直接针对当前最主要的用户痛点「${topPainPoint.theme}」。`
-      : `优先针对最主要的用户痛点「${topPainPoint.theme}」设计并测试新的广告角度。`,
-    `优先改进的产品短板：「${topPainPoint.theme}」——${topPainPoint.description}`,
-    keyQuote
-      ? `建议在广告文案中直接使用这句真实用户原话，增强可信度："${keyQuote}"`
-      : `建议从"消费者原声"板块中挑选真实用户用语，用于广告文案，增强可信度。`,
+  const adAngleLine: RecommendationLine = bestAdAngle
+    ? [
+        text("优先测试这条广告角度："),
+        tag(bestAdAngle.hook),
+        text("——直接针对当前最主要的用户痛点 "),
+        tag(topPainPoint.theme),
+        text("。"),
+      ]
+    : [text("优先针对最主要的用户痛点 "), tag(topPainPoint.theme), text(" 设计并测试新的广告角度。")];
+
+  const weaknessLine: RecommendationLine = [
+    text("优先改进的产品短板："),
+    tag(topPainPoint.theme),
+    text("——"),
+    tag(topPainPoint.description),
   ];
+
+  const quoteLine: RecommendationLine = keyQuote
+    ? [text("建议在广告文案中直接使用这句真实用户原话，增强可信度："), tag(keyQuote)]
+    : [text("建议从「消费者原声」板块中挑选真实用户用语，用于广告文案，增强可信度。")];
+
+  return [adAngleLine, weaknessLine, quoteLine];
+}
+
+// Flattens a recommendation line to plain text for the Copy Report export,
+// where tags can't be styled — quoting them keeps the evidence recognizable.
+export function flattenRecommendationLine(line: RecommendationLine): string {
+  return line.map((part) => (part.kind === "tag" ? `"${part.content}"` : part.content)).join("");
 }
 
 // Section-header labels follow the current UI language; the underlying
@@ -46,7 +79,7 @@ export function buildRecommendations(topFinding: TopFinding): string[] {
 export function formatReportText(
   result: AnalysisResult,
   topFinding: TopFinding | null,
-  recommendations: string[],
+  recommendations: RecommendationLine[],
   t: Translate
 ): string {
   const lines: string[] = [];
@@ -69,7 +102,7 @@ export function formatReportText(
   }
 
   lines.push(t("report.whatToDoNext"));
-  recommendations.forEach((r) => lines.push(`- ${r}`));
+  recommendations.forEach((line) => lines.push(`- ${flattenRecommendationLine(line)}`));
   lines.push("");
 
   lines.push(t("report.painPoints"));

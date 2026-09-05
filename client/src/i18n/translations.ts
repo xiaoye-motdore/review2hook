@@ -7,7 +7,7 @@ export type Locale = "en" | "zh";
 export const translations = {
   en: {
     "app.subtitle": "Upload a reviews CSV or XLSX export to mine pain points, consumer language, and ad angles.",
-    "app.trustLine": "AI-powered analysis · Trusted by cross-border sellers",
+    "app.trustLine": "From 500 reviews to your next winning ad — in 30 seconds.",
     "app.orTryDemo": "or try the demo",
 
     "asinForm.placeholder": "Enter an Amazon ASIN (e.g. B08XYZ1234)",
@@ -74,7 +74,7 @@ export const translations = {
   },
   zh: {
     "app.subtitle": "上传评论 CSV 或 XLSX 文件，挖掘用户痛点、消费者语言和广告角度。",
-    "app.trustLine": "AI 驱动分析 · 深受跨境卖家信赖",
+    "app.trustLine": "从 500 条评论，到你的下一条爆款广告——只需 30 秒。",
     "app.orTryDemo": "或试用演示数据",
 
     "asinForm.placeholder": "输入亚马逊 ASIN（例如 B08XYZ1234）",

@@ -1,7 +1,7 @@
 import { useLocale } from "../i18n/LocaleContext";
 import TopFinding from "./TopFinding";
 import Recommendations from "./Recommendations";
-import type { TopFinding as TopFindingData } from "../lib/deriveInsights";
+import { buildRecommendations, type TopFinding as TopFindingData } from "../lib/deriveInsights";
 
 // Static sample content — purely illustrative, never real analysis data.
 const SAMPLE_TOP_FINDING: TopFindingData = {
@@ -17,11 +17,7 @@ const SAMPLE_TOP_FINDING: TopFindingData = {
   keyQuote: "died after 10 minutes of use",
 };
 
-const SAMPLE_RECOMMENDATIONS = [
-  "优先测试针对电池续航痛点的广告角度。",
-  "优先改进的产品短板：电池续航能力。",
-  "建议在广告文案中使用真实用户原话，增强可信度。",
-];
+const SAMPLE_RECOMMENDATIONS = buildRecommendations(SAMPLE_TOP_FINDING);
 
 export default function EmptyStatePreview() {
   const { t } = useLocale();
