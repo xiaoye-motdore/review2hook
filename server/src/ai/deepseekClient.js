@@ -1,8 +1,12 @@
-// Thin wrapper around the DeepSeek chat completions API (OpenAI-compatible
-// request/response shape). Requires DEEPSEEK_API_KEY — see server/.env.
+// Thin wrapper around an OpenAI-compatible chat completions API. Defaults
+// to DeepSeek, but the base URL, key, and model are all configurable via
+// server/.env (API_BASE_URL / API_KEY / MODEL), so any OpenAI-compatible
+// provider (OpenAI, Gemini's OpenAI-compat endpoint, etc.) can be swapped
+// in without code changes. DEEPSEEK_API_KEY is kept as a fallback for the
+// default DeepSeek setup.
 
-const DEEPSEEK_BASE_URL = "https://api.deepseek.com";
-const DEEPSEEK_MODEL = "deepseek-chat";
+const DEFAULT_BASE_URL = "https://api.deepseek.com";
+const DEFAULT_MODEL = "deepseek-chat";
 
 function stripCodeFence(text) {
   const trimmed = text.trim();
@@ -11,19 +15,21 @@ function stripCodeFence(text) {
 }
 
 export async function callDeepSeekJSON({ system, user }) {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
+  const apiKey = process.env.API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    throw new Error("DEEPSEEK_API_KEY is not set. Add it to server/.env to enable AI analysis.");
+    throw new Error("API_KEY (or DEEPSEEK_API_KEY) is not set. Add it to server/.env to enable AI analysis.");
   }
+  const baseUrl = process.env.API_BASE_URL || DEFAULT_BASE_URL;
+  const model = process.env.MODEL || DEFAULT_MODEL;
 
-  const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+  const response = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
+      model,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
@@ -35,7 +41,7 @@ export async function callDeepSeekJSON({ system, user }) {
 
   if (!response.ok) {
     const body = await response.text().catch(() => "");
-    const error = new Error(`DeepSeek API error ${response.status}: ${body.slice(0, 300)}`);
+    const error = new Error(`AI API error ${response.status}: ${body.slice(0, 300)}`);
     // Surfaced as a gateway failure — it's our upstream dependency that
     // failed, not a problem with the caller's request.
     error.status = 502;
@@ -45,12 +51,12 @@ export async function callDeepSeekJSON({ system, user }) {
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content;
   if (!content) {
-    throw new Error("DeepSeek response contained no content.");
+    throw new Error("AI API response contained no content.");
   }
 
   try {
     return JSON.parse(stripCodeFence(content));
   } catch (err) {
-    throw new Error(`Could not parse DeepSeek response as JSON: ${err.message}`);
+    throw new Error(`Could not parse AI API response as JSON: ${err.message}`);
   }
 }
